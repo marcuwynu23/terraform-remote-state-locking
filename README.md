@@ -1,6 +1,6 @@
 # terraform-remote-state-locking
 
-This Terraform project demonstrates how to use remote state locking with various backend options, while deploying a Google Cloud Run service running a default Nginx container.
+This Terraform project demonstrates how to use remote state locking with various backend options.
 
 ## Remote State Locking
 
@@ -15,9 +15,6 @@ This project currently uses Google Cloud Storage (GCS) as the remote backend wit
 graph TD
     A[User] -->|terraform apply| B(Terraform)
     B -->|Auth via gcloud ADC| C{GCP API}
-    C -->|Enable| E[Cloud Run API]
-    C -->|Deploy| D[Cloud Run Service]
-    D -->|Host| F[Nginx Container]
     B -->|Read/Write State| G[GCS Bucket]
     G -->|State Locking| H[GCS Object Versioning & Locking]
 ```
@@ -29,7 +26,6 @@ sequenceDiagram
     participant T as Terraform
     participant G as gcloud CLI
     participant API as GCP Cloud API
-    participant CR as Cloud Run
     participant GCS as GCS Bucket
 
     U->>G: gcloud auth application-default login
@@ -38,13 +34,10 @@ sequenceDiagram
     T->>API: Authenticate using ADC
     T->>GCS: Acquire State Lock
     GCS-->>T: Lock Acquired
-    T->>API: Enable Cloud Run API
-    T->>API: Plan & Create Cloud Run Service
-    API->>CR: Deploy Nginx Container
-    CR-->>API: Service Ready
-    API-->>T: Service Provisioned
+    T->>GCS: Read State
+    T->>T: Plan Changes
     T->>GCS: Write State & Release Lock
-    T-->>U: Outputs (Service URL, Name)
+    T-->>U: Complete
 ```
 
 ## Backend Options
@@ -121,32 +114,6 @@ graph LR
 - Global edge network
 - Note: Requires separate locking mechanism
 
-## Connectivity
-
-- **Inbound Access**: Publicly accessible from the internet via the generated Service URL.
-- **Outbound Access**: The container has full access to the public internet (e.g., for API calls, updates, or external dependencies).
-- **Ingress Settings**: Configured to `INGRESS_TRAFFIC_ALL` to allow all external requests.
-
-## Service Specifications (Free Tier Optimized)
-
-- **Container Image**: `nginx:latest` (Default).
-- **Location**: Restricted to `us-west1`, `us-central1`, or `us-east1` (GCP Always Free Tier regions).
-- **Scaling**: `max_instance_count` set to `1` to prevent unexpected horizontal scaling costs.
-- **Resources**:
-  - **CPU**: 1 vCPU (CPU only allocated during request processing to maximize free tier seconds).
-  - **Memory**: 256 MiB.
-- **Ingress**: `All` (Publicly accessible).
-- **Authentication**: Unauthenticated access enabled.
-- **Naming**: A random 8-character hex suffix is automatically appended to your `service_name` to ensure project-wide uniqueness.
-
-## GCP Free Tier Limits (Always Free)
-
-To stay within the free tier, ensure your usage does not exceed:
-
-- **Requests**: 2 million requests per month.
-- **Compute**: 360,000 vCPU-seconds and 180,000 GiB-seconds of memory per month.
-- **Data Transfer**: 1 GB of outbound data transfer per month (within North America).
-
 ## Prerequisites
 
 1. **Google Cloud SDK**: `https://cloud.google.com/sdk/docs/install` .
@@ -155,7 +122,7 @@ To stay within the free tier, ensure your usage does not exceed:
 ## Setup & Deployment
 
 1. **Authenticate and Select Project**:
-   Instead of using a service account JSON file, this project uses your local `gcloud` credentials.
+   This project uses your local `gcloud` credentials for authentication.
 
    ```bash
    # Authenticate
@@ -180,12 +147,8 @@ To stay within the free tier, ensure your usage does not exceed:
    terraform init
    ```
 
-4. **Deploy**:
+4. **Validate Configuration**:
 
    ```bash
-   # Apply changes
-   terraform apply
+   terraform validate
    ```
-
-5. **Outputs**:
-   After a successful deployment, Terraform will output the Cloud Run service URL and name.
