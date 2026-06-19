@@ -1,0 +1,5 @@
+# ==========================================
+# Terraform State Backend
+# ==========================================
+backend_bucket   = "<name>-tfstate-bucket"
+backend_prefix    = "terraform-remote-state-locking"
