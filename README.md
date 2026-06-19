@@ -144,7 +144,7 @@ graph LR
    Ensure your GCS bucket exists and is configured for versioning and locking.
 
    ```bash
-   terraform init
+   terraform init -backend-config=backend.tfvars
    ```
 
 4. **Validate Configuration**:
