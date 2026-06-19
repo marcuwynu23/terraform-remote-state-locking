@@ -7,11 +7,7 @@ terraform {
 	}
 
 	backend "gcs" {
-		bucket = "iammwwhobuild-tfstate-bucket"
-		prefix = "terraform-remote-state-locking"
-
 	}
-
 }
 provider "google" {
   project = var.project_id
