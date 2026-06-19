@@ -8,7 +8,7 @@ terraform {
 
 	backend "gcs" {
 		bucket = "iammwwhobuild-tfstate-bucket"
-		prefix = "terraform/state"
+		prefix = "terraform-remote-state-locking"
 
 	}
 
