@@ -1,4 +1,4 @@
-# terraform-remote-state-locking
+# terraform-gcp-remote-state-locking
 
 This Terraform project demonstrates how to use remote state locking with various backend options.
 
@@ -100,20 +100,6 @@ graph LR
 - Service discovery integration
 - Self-hosted or HCP Consul
 
-### 5. Cloudflare R2
-```mermaid
-graph LR
-    A[Terraform] -->|State| B[R2 Bucket]
-    A -->|Lock| C[External Locking Service]
-    C --> D[DynamoDB / Consul]
-```
-
-**Features:**
-- S3-compatible object storage
-- No egress fees
-- Global edge network
-- Note: Requires separate locking mechanism
-
 ## Prerequisites
 
 1. **Google Cloud SDK**: `https://cloud.google.com/sdk/docs/install` .
@@ -168,6 +154,13 @@ module "remote_state" {
 }
 ```
 
-All [variables](#variables) documented below are available when using this as a module.
+---
+
+## Variables
+
+| Variable | Description | Type | Default |
+|----------|-------------|------|---------|
+| `project_id` | GCP project ID | `string` | (required) |
+| `region` | GCP region | `string` | `"us-central1"` |
 
 > **Note**: This module sets up the base provider configuration with GCS remote state. Configure your backend bucket via a `backend.tfvars` file or by passing backend configuration during `terraform init`.
