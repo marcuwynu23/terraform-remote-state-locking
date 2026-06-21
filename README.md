@@ -139,8 +139,6 @@ graph LR
     terraform validate
     ```
 
----
-
 ## Usage as a Module
 
 Reference this repository as a Terraform module in your own configurations:
@@ -153,8 +151,6 @@ module "remote_state" {
   region     = "us-central1"
 }
 ```
-
----
 
 ## Variables
 
