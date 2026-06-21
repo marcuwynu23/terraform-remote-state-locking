@@ -147,8 +147,27 @@ graph LR
    terraform init -backend-config=backend.tfvars
    ```
 
-4. **Validate Configuration**:
+4.  **Validate Configuration**:
 
-   ```bash
-   terraform validate
-   ```
+    ```bash
+    terraform validate
+    ```
+
+---
+
+## Usage as a Module
+
+Reference this repository as a Terraform module in your own configurations:
+
+```hcl
+module "remote_state" {
+  source = "github.com/marcuwynu23/terraform-gcp-remote-state-locking?ref=main"
+
+  project_id = var.project_id
+  region     = "us-central1"
+}
+```
+
+All [variables](#variables) documented below are available when using this as a module.
+
+> **Note**: This module sets up the base provider configuration with GCS remote state. Configure your backend bucket via a `backend.tfvars` file or by passing backend configuration during `terraform init`.
