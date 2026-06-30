@@ -160,3 +160,7 @@ module "remote_state" {
 | `region` | GCP region | `string` | `"us-central1"` |
 
 > **Note**: This module sets up the base provider configuration with GCS remote state. Configure your backend bucket via a `backend.tfvars` file or by passing backend configuration during `terraform init`.
+
+## Resources Created
+
+This module does not create any resources. It configures the Terraform provider and GCS remote state backend.
